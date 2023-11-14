@@ -4,7 +4,7 @@ public with sharing class FormulaFormatterFinal {
 
     @AuraEnabled
     public static String getFormula(String formula){
-        System.debug('[APEX] FormulaFormatter getFormula [START]');
+        System.debug('[APEX] FormulaFormatterFinal getFormula [START]');
 
         List<Integer> integerList = FormulaFormatterFinal.AscendedSortFormula(formula);
         System.debug(integerList);
@@ -120,11 +120,11 @@ public with sharing class FormulaFormatterFinal {
                     if(firstTime){
                         formula = 'NOT(';
                         if(value.substring(integerList[x]).startsWith('&&')){
-                            formula += '\n' + tab + 'AND(' + value.substring(integerList[i]).substringBetween('!','&&').remove('[()]') + ',' + value.substring(integerList[x]).substringAfter('&&');
+                            formula += '\n' + tab + 'AND(' + value.substring(integerList[i]).substringBetween('!','&&') + ',' + value.substring(integerList[x]).substringAfter('&&');
                             counter++;
                         }
                         if(value.substring(integerList[x]).startsWith('||')){
-                            formula += '\n' + tab + 'OR(' + value.substring(integerList[i]).substringBetween('!','||').remove('[()]') + ',' + value.substring(integerList[x]).substringAfter('||');
+                            formula += '\n' + tab + 'OR(' + value.substring(integerList[i]).substringBetween('!','||') + ',' + value.substring(integerList[x]).substringAfter('||');
                             counter++;
                         }
                         if(!value.substring(integerList[x]).startsWith('&&') && !value.substring(integerList[x]).startsWith('||')){
@@ -137,12 +137,12 @@ public with sharing class FormulaFormatterFinal {
                         formula = formula.substringBefore('!(') + '\n' + tab + 'NOT(';
                         if(value.substring(integerList[x]).startsWith('&&')){
                             tab += '    ';
-                            formula += '\n' + tab + 'AND(' + value.substring(integerList[i]).substringBetween('!','&&').remove('[()]') + ',' + value.substring(integerList[x]).substringAfter('&&');
+                            formula += '\n' + tab + 'AND(' + value.substring(integerList[i]).substringBetween('!','&&') + ',' + value.substring(integerList[x]).substringAfter('&&');
                             counter++;
                         }
                         if(value.substring(integerList[x]).startsWith('||')){
                             tab += '    ';
-                            formula += '\n' + tab + 'OR(' + value.substring(integerList[i]).substringBetween('!','||').remove('[()]') + ',' + value.substring(integerList[x]).substringAfter('||');
+                            formula += '\n' + tab + 'OR(' + value.substring(integerList[i]).substringBetween('!','||') + ',' + value.substring(integerList[x]).substringAfter('||');
                             counter++;
                         }
                         if(!value.substring(integerList[x]).startsWith('&&') && !value.substring(integerList[x]).startsWith('||')){
@@ -249,12 +249,12 @@ public with sharing class FormulaFormatterFinal {
         }
 
         System.debug(formula);
-        System.debug('[APEX] FormulaFormatter getFormula [END]');
+        System.debug('[APEX] FormulaFormatterFinal getFormula [END]');
         return formula;
     }
 
     public static List<Integer> AscendedSortFormula(String formula){
-        System.debug('[APEX] FormulaFormatter AscendedSortFormula [START]');
+        System.debug('[APEX] FormulaFormatterFinal AscendedSortFormula [START]');
 
         List<Integer> integerList = new List<Integer>();
 
@@ -284,7 +284,7 @@ public with sharing class FormulaFormatterFinal {
                 i++;
             }
         }
-        System.debug('[APEX] FormulaFormatter AscendedSortFormula [END]');
+        System.debug('[APEX] FormulaFormatterFinal AscendedSortFormula [END]');
         return integerList;
     }
 }
