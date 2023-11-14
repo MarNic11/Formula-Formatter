@@ -1,0 +1,28 @@
+!--
+ - Created by Damiano Strano and Mario Nicolosi on 06/11/2023.
+ -->
+
+<!-- Formula Formatter Box -->
+<template>
+    <lightning-card title="Formula Formatter" icon-name="standard:data_transforms">
+
+        <div class="slds-grid slds-wrap">
+            <div class="slds-size_1-of-2">
+                <div class="slds-box_x-small slds-text-align_center slds-m-around_x-small">
+                    <lightning-textarea name="inputFormula" onchange={handleChange} label="Initial Formula" placeholder="Enter a formula here ..." class="textAreaBody"></lightning-textarea>
+                </div>
+            </div>
+            <div class="slds-size_1-of-2">
+                <div class="slds-box_x-small slds-text-align_center slds-m-around_x-small">
+                    <lightning-textarea value={data} name="outputFormula" label="Final Formula" class="textAreaBody" read-only="true"></lightning-textarea>
+                </div>
+            </div>
+            <div class="slds-size_2-of-2">
+                <div class="slds-box_x-small slds-text-align_center slds-m-around_x-small">
+                    <lightning-button label="Formatta" onclick={handleSave} variant="brand" disabled={isTrue}></lightning-button>
+                </div>
+            </div>
+        </div>
+
+    </lightning-card>
+</template>

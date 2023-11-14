@@ -1,0 +1,7 @@
+/**
+ * Created by Damiano Strano and Mario Nicolosi on 06/11/2023.
+ */
+
+.textAreaBody {
+    --sds-c-textarea-sizing-min-height:175px;
+}
