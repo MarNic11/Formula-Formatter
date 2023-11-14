@@ -9,68 +9,14 @@ public with sharing class FormulaFormatterFinal {
         List<Integer> integerList = FormulaFormatterFinal.AscendedSortFormula(formula);
         System.debug(integerList);
         String value = formula;
-        Integer counter = 0;
-        Boolean firstTime = true;
         String tab = '';
-        Boolean lastCharacterNot = false;
+        Boolean firstTime = true;
+        Integer counter = 0;
 
-        if(integerList.isEmpty()){
-            List<Integer> integerListConv = FormulaFormatterFinal.AscendedSortFormulaConverted(formula);
-            System.debug(integerListConv);
-            Integer valueInteger = 0;
+        if((formula.contains('!') || formula.contains('&&') || formula.contains('||')) && !(formula.contains('AND') || formula.contains('OR') || formula.contains('NOT'))){
 
-            for(Integer i = 0; i < integerListConv.size(); i++){
+            Boolean lastCharacterNot = false;
 
-                if(!firstTime){
-                    tab += '    ';
-                    formula = formula.removeEnd(')');
-                    valueInteger++;
-                }
-
-                if(value.substring(integerListConv[i]).startsWith('AND')){
-                    if(firstTime){
-                        formula = 'and(' + formula.substring(integerListConv[i]).substringAfter('AND(');
-                    }
-                    else{
-                        formula = formula.substringBefore('AND(') + '\n' + tab+ 'and(' + formula.substring(integerListConv[i]).substringAfter('AND(');
-                    }
-                }
-                if(value.substring(integerListConv[i]).startsWith('OR')){
-                    if(firstTime){
-                        formula = 'or(' + formula.substring(integerListConv[i]).substringAfter('OR(');
-                    }
-                    else{
-                        formula = formula.substringBefore('OR(') + '\n' + tab+ 'or(' + formula.substring(integerListConv[i]).substringAfter('OR(');
-                    }
-                }
-                if(value.substring(integerListConv[i]).startsWith('NOT')){
-                    if(firstTime){
-                        formula = 'not(' + formula.substring(integerListConv[i]).substringAfter('NOT(');
-                    }
-                    else{
-                        formula = formula.substringBefore('NOT(') + '\n' + tab+ 'not(' + formula.substring(integerListConv[i]).substringAfter('NOT(');
-                    }
-                }
-
-                firstTime = false;
-            }
-
-            if(formula.contains('not')){
-                formula = formula.replace('not','NOT');
-            }
-            if(formula.contains('or')){
-                formula = formula.replace('or','OR');
-            }
-            if(formula.contains('and')){
-                formula = formula.replace('and','AND');
-            }
-
-            for (Integer i=0; i < valueInteger; i++){
-                tab = tab.removeEnd('    ');
-                formula += '\n'+tab+')';
-            }
-        }
-        else{
             for(Integer i = 0; i < integerList.size(); i++){
 
                 Integer x = 0;
@@ -249,14 +195,66 @@ public with sharing class FormulaFormatterFinal {
                 formula = formula + '\n'+ tab +')';
             }
         }
+        else{
+            for(Integer i = 0; i < integerList.size(); i++){
+
+                if(!firstTime){
+                    tab += '    ';
+                    formula = formula.removeEnd(')');
+                    counter++;
+                }
+
+                if(value.substring(integerList[i]).startsWith('AND')){
+                    if(firstTime){
+                        formula = 'and(' + formula.substring(integerList[i]).substringAfter('AND(');
+                    }
+                    else{
+                        formula = formula.substringBefore('AND(') + '\n' + tab+ 'and(' + formula.substring(integerList[i]).substringAfter('AND(');
+                    }
+                }
+                if(value.substring(integerList[i]).startsWith('OR')){
+                    if(firstTime){
+                        formula = 'or(' + formula.substring(integerList[i]).substringAfter('OR(');
+                    }
+                    else{
+                        formula = formula.substringBefore('OR(') + '\n' + tab+ 'or(' + formula.substring(integerList[i]).substringAfter('OR(');
+                    }
+                }
+                if(value.substring(integerList[i]).startsWith('NOT')){
+                    if(firstTime){
+                        formula = 'not(' + formula.substring(integerList[i]).substringAfter('NOT(');
+                    }
+                    else{
+                        formula = formula.substringBefore('NOT(') + '\n' + tab+ 'not(' + formula.substring(integerList[i]).substringAfter('NOT(');
+                    }
+                }
+
+                firstTime = false;
+            }
+
+            if(formula.contains('not')){
+                formula = formula.replace('not','NOT');
+            }
+            if(formula.contains('or')){
+                formula = formula.replace('or','OR');
+            }
+            if(formula.contains('and')){
+                formula = formula.replace('and','AND');
+            }
+
+            for (Integer i=0; i < counter; i++){
+                tab = tab.removeEnd('    ');
+                formula += '\n'+tab+')';
+            }
+        }
 
         System.debug(formula);
         System.debug('[APEX] FormulaFormatter getFormula [END]');
         return formula;
     }
 
-    public static List<Integer> AscendedSortFormulaConverted(String formula){
-        System.debug('[APEX] FormulaFormatter AscendedSortFormulaConverted [START]');
+    public static List<Integer> AscendedSortFormula(String formula){
+        System.debug('[APEX] FormulaFormatter AscendedSortFormula [START]');
 
         List<Integer> integerList = new List<Integer>();
 
@@ -273,17 +271,6 @@ public with sharing class FormulaFormatterFinal {
                 integerList.add(formula.indexOf('NOT',i));
                 i = i + 3;
             }
-        }
-        System.debug('[APEX] FormulaFormatter AscendedSortFormulaConverted [END]');
-        return integerList;
-    }
-
-    public static List<Integer> AscendedSortFormula(String formula){
-        System.debug('[APEX] FormulaFormatter AscendedSortFormula [START]');
-
-        List<Integer> integerList = new List<Integer>();
-
-        for(Integer i = 0; i < formula.length(); i++){
             if(formula.substring(i).startsWith('&&')){
                 integerList.add(formula.indexOf('&&',i));
                 i = i + 2;
