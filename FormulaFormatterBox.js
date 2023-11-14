@@ -41,6 +41,7 @@ export default class FormulaFormatterBox extends LightningElement {
                 message: error.message,
                 variant: 'error'}));
         });
+        
         console.log('[JS] FormulaFormatterBox handleSave [END]');
     }
 }
