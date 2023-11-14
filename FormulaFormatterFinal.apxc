@@ -32,6 +32,7 @@ public with sharing class FormulaFormatterFinal {
 
                 if(value.substring(integerList[i]).startsWith('&&')){
                     counter++;
+
                     if(firstTime){
                         formula = 'AND(';
                         if(value.substring(integerList[x]).startsWith('!')){
