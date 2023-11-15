@@ -32,7 +32,6 @@ public with sharing class FormulaFormatterFinal {
 
                 if(value.substring(integerList[i]).startsWith('&&')){
                     counter++;
-
                     if(firstTime){
                         formula = 'AND(';
                         if(value.substring(integerList[x]).startsWith('!')){
@@ -121,11 +120,11 @@ public with sharing class FormulaFormatterFinal {
                     if(firstTime){
                         formula = 'NOT(';
                         if(value.substring(integerList[x]).startsWith('&&')){
-                            formula += '\n' + tab + 'AND(' + value.substring(integerList[i]).substringBetween('!','&&') + ',' + value.substring(integerList[x]).substringAfter('&&');
+                            formula += '\n' + tab + 'AND(' + value.substring(integerList[i]).substringBetween('!(','&&') + ',' + value.substring(integerList[x]).substringAfter('&&');
                             counter++;
                         }
                         if(value.substring(integerList[x]).startsWith('||')){
-                            formula += '\n' + tab + 'OR(' + value.substring(integerList[i]).substringBetween('!','||') + ',' + value.substring(integerList[x]).substringAfter('||');
+                            formula += '\n' + tab + 'OR(' + value.substring(integerList[i]).substringBetween('!(','||') + ',' + value.substring(integerList[x]).substringAfter('||');
                             counter++;
                         }
                         if(!value.substring(integerList[x]).startsWith('&&') && !value.substring(integerList[x]).startsWith('||')){
@@ -135,7 +134,7 @@ public with sharing class FormulaFormatterFinal {
                         }
                     }
                     else{
-                        formula = formula.substringBefore('!(') + '\n' + tab + 'NOT(';
+                        formula = formula.substringBefore('!') + '\n' + tab + 'NOT(';
                         if(value.substring(integerList[x]).startsWith('&&')){
                             tab += '    ';
                             formula += '\n' + tab + 'AND(' + value.substring(integerList[i]).substringBetween('!','&&') + ',' + value.substring(integerList[x]).substringAfter('&&');
@@ -179,7 +178,7 @@ public with sharing class FormulaFormatterFinal {
                     firstTime = false;
                     continue;
                 }
-                else if(lastCharacterNot && firstTime &&  formula.endsWith('))')){
+                else if(lastCharacterNot && firstTime && formula.endsWith('))')){
                     tab = tab.removeEnd('    ');
                     formula = formula.removeEnd(')')+ '\n'+ tab +')';
                     firstTime = false;
@@ -192,11 +191,21 @@ public with sharing class FormulaFormatterFinal {
                     firstTime = false;
                     continue;
                 }
+
                 tab = tab.removeEnd('    ');
                 formula = formula + '\n'+ tab +')';
+
+                if(tab.length() == 0){
+                    counter--;
+                }
             }
+
+            System.debug(formula);
+            System.debug('[APEX] FormulaFormatterFinal getFormula [END]');
+            return formula;
         }
-        else{
+        else if(!(formula.contains('!') || formula.contains('&&') || formula.contains('||')) && (formula.contains('AND') || formula.contains('OR') || formula.contains('NOT'))){
+
             for(Integer i = 0; i < integerList.size(); i++){
 
                 if(!firstTime){
@@ -247,11 +256,15 @@ public with sharing class FormulaFormatterFinal {
                 tab = tab.removeEnd('    ');
                 formula += '\n'+tab+')';
             }
-        }
 
-        System.debug(formula);
-        System.debug('[APEX] FormulaFormatterFinal getFormula [END]');
-        return formula;
+            System.debug(formula);
+            System.debug('[APEX] FormulaFormatterFinal getFormula [END]');
+            return formula;
+        }
+        else{
+            System.debug('[APEX] FormulaFormatterFinal getFormula [END]');
+            return 'Error';
+        }
     }
 
     public static List<Integer> AscendedSortFormula(String formula){
