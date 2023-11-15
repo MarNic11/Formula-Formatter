@@ -31,7 +31,16 @@ export default class FormulaFormatterBox extends LightningElement {
         getFormulaFinal({ formula : this.formulaValue})
         .then(result => {
             //console.log('result --> '+result);
-            this.data = result;
+            if(result == 'Error'){
+                this.isTrue = true;
+                this.dispatchEvent(new ShowToastEvent({
+                    title: 'Error',
+                    message: 'Mixed formulas are not accepted',
+                    variant: 'error'}));
+            }
+            else{
+                this.data = result;
+            }
         })
         .catch(error => {
             console.log('error --> '+error.message);
@@ -41,7 +50,6 @@ export default class FormulaFormatterBox extends LightningElement {
                 message: error.message,
                 variant: 'error'}));
         });
-        
         console.log('[JS] FormulaFormatterBox handleSave [END]');
     }
 }
