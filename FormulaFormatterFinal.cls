@@ -6,6 +6,9 @@ public with sharing class FormulaFormatterFinal {
     public static String getFormula(String formula){
         System.debug('[APEX] FormulaFormatterFinal getFormula [START]');
 
+        if(formula.contains('NOT')){
+            formula = formula.replace('NOT','!');
+        }
         List<Integer> integerList = FormulaFormatterFinal.AscendedSortFormula(formula);
         System.debug(integerList);
         String value = formula;
@@ -13,7 +16,7 @@ public with sharing class FormulaFormatterFinal {
         Boolean firstTime = true;
         Integer counter = 0;
 
-        if((formula.contains('!') || formula.contains('&&') || formula.contains('||')) && !(formula.contains('AND') || formula.contains('OR') || formula.contains('NOT'))){
+        if((formula.contains('&&') || formula.contains('||')) && !(formula.contains('AND') || formula.contains('OR'))){
 
             Boolean lastCharacterNot = false;
 
@@ -204,7 +207,7 @@ public with sharing class FormulaFormatterFinal {
             System.debug('[APEX] FormulaFormatterFinal getFormula [END]');
             return formula;
         }
-        else if(!(formula.contains('!') || formula.contains('&&') || formula.contains('||')) && (formula.contains('AND') || formula.contains('OR') || formula.contains('NOT'))){
+        else if(!(formula.contains('&&') || formula.contains('||')) && (formula.contains('AND') || formula.contains('OR'))){
 
             for(Integer i = 0; i < integerList.size(); i++){
 
@@ -230,21 +233,18 @@ public with sharing class FormulaFormatterFinal {
                         formula = formula.substringBefore('OR(') + '\n' + tab+ 'or(' + formula.substring(integerList[i]).substringAfter('OR(');
                     }
                 }
-                if(value.substring(integerList[i]).startsWith('NOT')){
+                if(value.substring(integerList[i]).startsWith('!')){
                     if(firstTime){
-                        formula = 'not(' + formula.substring(integerList[i]).substringAfter('NOT(');
+                        formula = 'NOT(' + formula.substring(integerList[i]).substringAfter('!(');
                     }
                     else{
-                        formula = formula.substringBefore('NOT(') + '\n' + tab+ 'not(' + formula.substring(integerList[i]).substringAfter('NOT(');
+                        formula = formula.substringBefore('!(') + '\n' + tab+ 'NOT(' + formula.substring(integerList[i]).substringAfter('!(');
                     }
                 }
 
                 firstTime = false;
             }
 
-            if(formula.contains('not')){
-                formula = formula.replace('not','NOT');
-            }
             if(formula.contains('or')){
                 formula = formula.replace('or','OR');
             }
@@ -280,10 +280,6 @@ public with sharing class FormulaFormatterFinal {
             if(formula.substring(i).startsWith('OR')){
                 integerList.add(formula.indexOf('OR',i));
                 i = i + 2;
-            }
-            if(formula.substring(i).startsWith('NOT')){
-                integerList.add(formula.indexOf('NOT',i));
-                i = i + 3;
             }
             if(formula.substring(i).startsWith('&&')){
                 integerList.add(formula.indexOf('&&',i));
