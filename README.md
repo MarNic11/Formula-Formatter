@@ -1,7 +1,7 @@
 # Formula-Formatter
 LWC for format formula
 
-This LWC does not work with mixed formulas, except for NOT value.
+This LWC does not work with mixed formulas, except for NOT operator.
 
 Example for formula : 
 
