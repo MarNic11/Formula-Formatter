@@ -16,7 +16,7 @@ public with sharing class FormulaFormatterFinal {
         Boolean firstTime = true;
         Integer counter = 0;
 
-        if((formula.contains('&&') || formula.contains('||')) && !(formula.contains('AND') || formula.contains('OR'))){
+        if((formula.contains('&&') || formula.contains('||')) && !(formula.contains('AND') || formula.contains('OR('))){
 
             Boolean lastCharacterNot = false;
 
@@ -213,7 +213,7 @@ public with sharing class FormulaFormatterFinal {
             System.debug('[APEX] FormulaFormatterFinal getFormula [END]');
             return formula;
         }
-        else if(!(formula.contains('&&') || formula.contains('||')) && (formula.contains('AND') || formula.contains('OR'))){
+        else if(!(formula.contains('&&') || formula.contains('||')) && (formula.contains('AND') || formula.contains('OR('))){
 
             for(Integer i = 0; i < integerList.size(); i++){
 
@@ -283,7 +283,7 @@ public with sharing class FormulaFormatterFinal {
                 integerList.add(formula.indexOf('AND',i));
                 i = i + 3;
             }
-            if(formula.substring(i).startsWith('OR')){
+            if(formula.substring(i).startsWith('OR(')){
                 integerList.add(formula.indexOf('OR',i));
                 i = i + 2;
             }
