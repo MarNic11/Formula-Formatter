@@ -49,10 +49,6 @@ public with sharing class FormulaFormatterFinal {
                             formula += value.substringBefore('&&') +',\n' + tab + 'AND(' + value.substring(integerList[i]).substringBetween('&&','&&') +','+ value.substring(integerList[x]).substringAfter('&&');
                             counter++;
                         }
-                        if(!value.substring(integerList[x]).startsWith('&&') && !value.substring(integerList[x]).startsWith('!') && !value.substring(integerList[x]).startsWith('||')){
-                            formula += value.substringBefore('&&') +','+ value.substring(integerList[i]).substringAfter('&&');
-                            break;
-                        }
                     }
                     else{
                         formula = formula.substringBefore('&&') + '\n' + tab + 'AND(';
@@ -92,10 +88,6 @@ public with sharing class FormulaFormatterFinal {
                             formula += value.substringBefore('||') +',\n' + tab + 'OR(' + value.substring(integerList[i]).substringBetween('||','||') +','+ value.substring(integerList[x]).substringAfter('||');
                             counter++;
                         }
-                        if(!value.substring(integerList[x]).startsWith('||') && !value.substring(integerList[x]).startsWith('!') && !value.substring(integerList[x]).startsWith('&&')){
-                            formula += value.substringBefore('||') +','+ value.substring(integerList[i]).substringAfter('||');
-                            break;
-                        }
                     }
                     else{
                         formula = formula.substringBefore('||') + '\n' + tab + ' OR(';
@@ -121,35 +113,50 @@ public with sharing class FormulaFormatterFinal {
                 }
                 if(value.substring(integerList[i]).startsWith('!')){
                     if(firstTime){
-                        formula = 'NOT(';
                         if(value.substring(integerList[x]).startsWith('&&')){
-                            formula += '\n' + tab + 'AND(' + value.substring(integerList[i]).substringBetween('!(','&&') + ',' + value.substring(integerList[x]).substringAfter('&&');
+                            if(value.substringBefore('&&').right(3).contains(')')){
+                                formula = 'AND(' + '\n' + tab + 'NOT(' + value.substring(integerList[i]).substringBetween('!','&&') + '),' + value.substring(integerList[x]).substringAfter('&&');
+                            }
+                            else{
+                                formula = 'NOT(' + '\n' + tab + 'AND(' + value.substring(integerList[i]).substringBetween('!','&&') + ',' + value.substring(integerList[x]).substringAfter('&&');
+                            }
                             counter++;
                         }
                         if(value.substring(integerList[x]).startsWith('||')){
-                            formula += '\n' + tab + 'OR(' + value.substring(integerList[i]).substringBetween('!(','||') + ',' + value.substring(integerList[x]).substringAfter('||');
+                            if(value.substringBefore('||').right(3).contains(')')){
+                                formula = 'OR(' + '\n' + tab + 'NOT(' + value.substring(integerList[i]).substringBetween('!','||') + '),' + value.substring(integerList[x]).substringAfter('||');
+                            }
+                            else{
+                                formula = 'NOT(' + '\n' + tab + 'OR(' + value.substring(integerList[i]).substringBetween('!','||') + ',' + value.substring(integerList[x]).substringAfter('||');
+                            }
                             counter++;
-                        }
-                        if(!value.substring(integerList[x]).startsWith('&&') && !value.substring(integerList[x]).startsWith('||')){
-                            formula += value.substring(integerList[i]).substringAfter('!');
-                            lastCharacterNot = true;
-                            break;
                         }
                     }
                     else{
-                        formula = formula.substringBefore('!') + '\n' + tab + 'NOT(';
+                        formula = formula.substringBefore('!') + '\n' + tab;
                         if(value.substring(integerList[x]).startsWith('&&')){
                             tab += '    ';
-                            formula += '\n' + tab + 'AND(' + value.substring(integerList[i]).substringBetween('!','&&') + ',' + value.substring(integerList[x]).substringAfter('&&');
+                            if(value.substringBefore('&&').right(3).contains(')')){
+                                formula += 'AND(' + '\n' + tab + 'NOT(' + value.substring(integerList[i]).substringBetween('!','&&') + '),' + value.substring(integerList[x]).substringAfter('&&');
+                            }
+                            else{
+                                formula += 'NOT(' + '\n' + tab + 'AND(' + value.substring(integerList[i]).substringBetween('!','&&') + ',' + value.substring(integerList[x]).substringAfter('&&');
+                            }
                             counter++;
                         }
                         if(value.substring(integerList[x]).startsWith('||')){
                             tab += '    ';
-                            formula += '\n' + tab + 'OR(' + value.substring(integerList[i]).substringBetween('!','||') + ',' + value.substring(integerList[x]).substringAfter('||');
+                            if(value.substringBefore('||').right(3).contains(')')){
+                                formula +=  'OR(' + '\n' + tab + 'NOT(' + value.substring(integerList[i]).substringBetween('!','||') + '),' + value.substring(integerList[x]).substringAfter('||');
+                            }
+                            else{
+                                formula +=  'NOT(' + '\n' + tab + 'OR(' + value.substring(integerList[i]).substringBetween('!','||') + ',' + value.substring(integerList[x]).substringAfter('||');
+                            }
                             counter++;
                         }
                         if(!value.substring(integerList[x]).startsWith('&&') && !value.substring(integerList[x]).startsWith('||')){
-                            formula += value.substring(integerList[i]).substringAfter('!').remove('(');
+                            String notLastValue = value.substring(integerList[i]).startsWith('!(') ? value.substring(integerList[i]).substringAfter('!(') : value.substring(integerList[i]).substringAfter('!');
+                            formula += 'NOT(' + notLastValue;
                             lastCharacterNot = true;
                             break;
                         }
@@ -169,7 +176,6 @@ public with sharing class FormulaFormatterFinal {
             for (Integer i=0; i < counter; i++){
 
                 if(!formula.endsWith(')') && firstTime){
-                    counter--;
                     tab = tab.removeEnd('    ');
                     formula = formula +')';
                     firstTime = false;
@@ -177,7 +183,7 @@ public with sharing class FormulaFormatterFinal {
                 }
                 else if(firstTime && formula.endsWith(')))')){
                     tab = tab.removeEnd('    ');
-                    formula = formula.removeEnd('))')+ '\n'+ tab +')';
+                    formula = formula.removeEnd(')')+ '\n'+ tab +')';
                     firstTime = false;
                     continue;
                 }
